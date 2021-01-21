@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ConversationResource;
 use App\Models\Conversation;
+use App\Models\Message;
 use Illuminate\Http\Request;
 
 class ConversationController extends Controller
@@ -15,7 +16,14 @@ class ConversationController extends Controller
      */
     public function index()
     {
-        return ConversationResource::collection(Conversation::all());
+        $conversations = Conversation::where('user_id', auth()->id())
+            ->orWhere('other_id', auth()->id())->orderByDesc(
+                Message::select('created_at')
+                    ->whereColumn('conversation_id', 'conversations.id')
+                    ->orderByDesc('created_at')
+                    ->limit(1)
+            )->get();
+        return ConversationResource::collection($conversations);
     }
 
     /**

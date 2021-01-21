@@ -23,6 +23,6 @@ Route::post('/login', [ApiAuthController::class, 'login']);
 
 Route::middleware('auth:api')->group(function ()
 {
-    Route::get('conversations', [ConversationController::class, 'index']);
     Route::post('messages', [MessageController::class, 'store']);
 });
+Route::get('conversations', [ConversationController::class, 'index']);
