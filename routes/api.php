@@ -18,11 +18,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::post('/register', [ApiAuthController::class, 'register']);
-Route::post('/login', [ApiAuthController::class, 'login']);
+Route::post('register', [ApiAuthController::class, 'register']);
+Route::post('login', [ApiAuthController::class, 'login']);
 
 Route::middleware('auth:api')->group(function ()
 {
+    Route::post('/logout', [ApiAuthController::class, 'logout']);
     Route::post('messages', [MessageController::class, 'store']);
+    Route::get('conversations', [ConversationController::class, 'index']);
+    Route::post('conversations', [ConversationController::class, 'store']);
 });
-Route::get('conversations', [ConversationController::class, 'index']);

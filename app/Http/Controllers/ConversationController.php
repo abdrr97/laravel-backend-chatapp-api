@@ -17,23 +17,14 @@ class ConversationController extends Controller
     public function index()
     {
         $conversations = Conversation::where('user_id', auth()->id())
-            ->orWhere('other_id', auth()->id())->orderByDesc(
+            ->orWhere('other_id', auth()->id())
+            ->orderByDesc(
                 Message::select('created_at')
                     ->whereColumn('conversation_id', 'conversations.id')
                     ->orderByDesc('created_at')
                     ->limit(1)
             )->get();
         return ConversationResource::collection($conversations);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -44,7 +35,26 @@ class ConversationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'other_id' => 'required',
+            'body' => 'required',
+            'read' => '',
+            'conversation_id' => '',
+        ]);
+
+        $conversation =  Conversation::create([
+            'user_id' => auth()->id(),
+            'other_id' => $request->other_id
+        ]);
+
+        Message::create([
+            'body' => $request->body,
+            'read' => false,
+            'user_id' => auth()->id(),
+            'conversation_id' => $conversation->id,
+        ]);
+
+        return response()->json(['message' => 'successfully created conversation']);
     }
 
     /**
@@ -54,17 +64,6 @@ class ConversationController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Conversation $conversation)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Conversation  $conversation
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Conversation $conversation)
     {
         //
     }

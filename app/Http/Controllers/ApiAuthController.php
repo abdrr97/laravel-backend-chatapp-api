@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -49,7 +50,7 @@ class ApiAuthController extends Controller
             'user_name' => 'required|string|max:255',
             'full_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|max:255',
+            'password' => 'required|string|min:6|max:255',
         ]);
 
         return User::create([
@@ -58,5 +59,12 @@ class ApiAuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+    }
+
+    public function logout()
+    {
+        auth()->user()->token()->revoke();
+
+        return response()->json(['messages' => 'Logged out successfully !😁']);
     }
 }
