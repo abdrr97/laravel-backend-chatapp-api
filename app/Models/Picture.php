@@ -9,6 +9,8 @@ class Picture extends Model
 {
     use HasFactory;
 
+    protected $fillable = [];
+
     public function user()
     {
         $this->belongsTo(User::class);

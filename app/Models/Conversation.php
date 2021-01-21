@@ -9,6 +9,8 @@ class Conversation extends Model
 {
     use HasFactory;
 
+    protected $fillable = [];
+
     public function messages()
     {
         return $this->hasMany(Message::class);

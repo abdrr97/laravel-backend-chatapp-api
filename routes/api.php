@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApiAuthController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\MessageController;
 use Illuminate\Http\Request;
@@ -16,11 +17,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request)
+
+Route::post('/register', [ApiAuthController::class, 'register']);
+Route::post('/login', [ApiAuthController::class, 'login']);
+
+Route::middleware('auth:api')->group(function ()
 {
-    return $request->user();
+    Route::get('conversations', [ConversationController::class, 'index']);
+    Route::post('messages', [MessageController::class, 'store']);
 });
-
-
-Route::get('conversations', [ConversationController::class, 'index']);
-Route::post('messages', [MessageController::class, 'store']);
