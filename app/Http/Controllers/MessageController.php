@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\MessageResource;
 use App\Models\Message;
 use Illuminate\Http\Request;
 
@@ -14,17 +15,7 @@ class MessageController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return MessageResource::collection(Message::all());
     }
 
     /**
@@ -35,7 +26,21 @@ class MessageController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'body' => 'string',
+            'read' => '',
+            'user_id' => '',
+            'conversation_id' => '',
+        ]);
+        $message = new Message();
+        $message->body = $data['body'];
+        $message->read = false;
+        $message->user_id = rand(1, 3);
+        $message->conversation_id = rand(1, 3);
+
+        $message->save();
+
+        return new MessageResource($message);
     }
 
     /**

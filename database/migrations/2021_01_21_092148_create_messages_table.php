@@ -17,9 +17,9 @@ class CreateMessagesTable extends Migration
         {
             $table->id();
             $table->string('body');
-            $table->boolean('read');
+            $table->boolean('read')->default(false);
             $table->unsignedBigInteger('user_id')->index();
-            $table->unsignedBigInteger('conversation_id')->index()->nullable();
+            $table->unsignedBigInteger('conversation_id')->index();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
