@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\MessageResource;
 use App\Models\Message;
+use Facade\FlareClient\Http\Response;
 use Illuminate\Http\Request;
 
 class MessageController extends Controller
@@ -26,21 +27,26 @@ class MessageController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'body' => 'string',
+        $valid = validator($request->all(), [
+            'body' => 'required|string|max:255',
             'read' => '',
             'user_id' => '',
             'conversation_id' => '',
         ]);
-        $message = new Message();
-        $message->body = $data['body'];
-        $message->read = false;
-        $message->user_id = rand(1, 3);
-        $message->conversation_id = rand(1, 3);
 
-        $message->save();
+        if ($valid->errors()->isEmpty())
+        {
+            $message = new Message();
+            $message->body = $request->body;
+            $message->read = false;
+            $message->user_id = rand(1, 3);
+            $message->conversation_id = rand(1, 3);
 
-        return new MessageResource($message);
+            $message->save();
+
+            return new MessageResource($message);
+        }
+        return response()->json(['message' => 'Enter a valid data']);
     }
 
     /**
