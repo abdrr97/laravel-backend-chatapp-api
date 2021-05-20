@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ConversationResource;
 use App\Models\Conversation;
 use App\Models\Message;
+use Facade\FlareClient\Http\Response;
 use Illuminate\Http\Request;
 
 class ConversationController extends Controller
@@ -54,7 +55,18 @@ class ConversationController extends Controller
             'conversation_id' => $conversation->id,
         ]);
 
-        return response()->json(['message' => 'successfully created conversation']);
+        return response()->json(['message' => 'successfully created conversation'], 200);
+    }
+
+    public function markeConversationAsRead(Request $request)
+    {
+        $request->validate(['conversation_id' => 'required']);
+        $conversation = Conversation::findOrFail($request->conversation_id);
+        foreach ($conversation->messages  as $message)
+        {
+            $message->update(['read' => true]);
+        }
+        return response()->json(['message' => 'All messages were successfully set to read 😙'], 200);
     }
 
     /**

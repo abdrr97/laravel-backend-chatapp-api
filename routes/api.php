@@ -18,13 +18,22 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::post('register', [ApiAuthController::class, 'register']);
-Route::post('login', [ApiAuthController::class, 'login']);
-
-Route::middleware('auth:api')->group(function ()
+Route::group(['middleware' => 'auth:api'], function ()
 {
-    Route::post('/logout', [ApiAuthController::class, 'logout']);
-    Route::post('messages', [MessageController::class, 'store']);
-    Route::get('conversations', [ConversationController::class, 'index']);
-    Route::post('conversations', [ConversationController::class, 'store']);
+    Route::get('feed', [PostController::class, 'feed']);
+
+    Route::group(['prefix' => 'post'], function ()
+    {
+        Route::get('list', [PostController::class, 'list']);
+        Route::post('create', [PostController::class, 'store']);
+        Route::post('{post}/like', [PostController::class, 'like']);
+        Route::post('{post}/delete', [PostController::class, 'delete_post']);
+        Route::post('{post}/comments', [PostCommentController::class, 'create']);
+    });
+    Route::group(['prefix' => 'user'], function ()
+    {
+        Route::get('logged_in_user', [UserController::class, 'logged_in_user']);
+        Route::post('{user}/follow', [UserController::class, 'follow']);
+        Route::post('{user}/unfollow', [UserController::class, 'unfollow']);
+    });
 });
